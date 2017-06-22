@@ -1,0 +1,69 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.2-2'
+    //id 'com.bmuschko.docker-java-application' version '3.0.6'
+}
+
+repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    // kotlin stdlib to get kotlin to do anything
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1.2-2'
+
+    // spark rest framework
+    compile 'com.sparkjava:spark-core:2.6.0'
+    // needed in spark 2.5 to get rid of
+    // > Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+    // error message and enable logging
+    compile 'org.slf4j:slf4j-simple:1.7.25'
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+
+    // convenient json library
+    compile 'com.fasterxml.jackson.core:jackson-core:2.8.8'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.8.1'
+
+    // pdf library that suppirts form flattening (used by pdftk)
+    compile 'com.itextpdf:itextpdf:5.5.11'
+
+    // Test Dependencies
+    // unit testing framework that sucks balls (FIXME: any other options?)
+    testCompile 'junit:junit:4.12'
+    // convenient request library
+    testCompile 'com.mashape.unirest:unirest-java:1.4.8'
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/'
+    test.kotlin.srcDirs += 'src/test/'
+    test.resources.srcDirs += 'resources/test/'
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+jar {
+    baseName = 'nano-pdf'
+    version = '0.0.1'
+    mainClassName = 'MainKt'
+    manifest {
+        attributes 'Implementation-Title': 'Nano-PDF Microservice',
+                   'Implementation-Version': version,
+                   'Main-Class': mainClassName
+    }
+}
+
+/*docker {
+    javaApplication {
+        baseImage = 'openjdk/8-jre-alpine'
+        maintainer = 'Jan Schwalbe "jan.schwalbe@martaflex.de"'
+        ports = [9091]
+        tag = 'martaflex/nanopdf:0.0.1'
+    }
+}*/
