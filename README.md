@@ -7,6 +7,7 @@ REST microservice intended to provide functionaility similar to pdftk
     port: 9091
 
     create docker image in repo dir via:
+        ./gradew build #which creates the nessecary tarball
         docker build -t martaflex/nanopdf:0.0.1 .
 
     unit test wil create ./some.pdf for manual review of the
@@ -31,4 +32,5 @@ REST microservice intended to provide functionaility similar to pdftk
 
     response body: modified pdf in binary form
 
+    ( gradle 3.5 might be needed )
 
