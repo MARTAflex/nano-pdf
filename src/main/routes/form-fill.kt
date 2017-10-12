@@ -97,7 +97,8 @@ fun FormFill () {
 
             stamper.setFormFlattening(json.get("flatten")?.asBoolean() ?: false);
             stamper.close();
-
+            
+            response.type("application/pdf");
             return buffer.toByteArray();
         }
         catch ( e : InvalidPdfException) {
