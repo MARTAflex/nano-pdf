@@ -7,4 +7,5 @@ fun Service () {
     port(9091)
     FormFill();
     ToText();
+    GroupPages();
 }
