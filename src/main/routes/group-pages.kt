@@ -11,14 +11,14 @@ import spark.ResponseTransformer
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
 
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfCopy;
 
-fun FormFill () {
-    post("/form-fill", "application/json", fun(request, response) : Any {
+fun GroupPages () {
+    post("/group-pages", "application/json", fun(request, response) : Any {
         val body = request.body();
 
         if (body == "") {
@@ -45,25 +45,30 @@ fun FormFill () {
         val pdf = fromBase64(json.get("pdf").asText())!!;
 
         try {
-            val reader = PdfReader(pdf);
-            val buffer = ByteArrayOutputStream();
-            val stamper = PdfStamper(reader, buffer);
-
-            val form = stamper.getAcroFields();
-            form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
-            val values = json.get("data");
+            val reader = PdfReader(pdf)
+            val values = json.get("data")
+            var result: MutableMap<String, String> = mutableMapOf()
 
             for (key in values.fieldNames()) {
-                if (form.getField(key) != null) {
-                    form.setField(key, values.get(key).asText(""));
+                var buffer = ByteArrayOutputStream()
+                var document = Document()
+                var copy = PdfCopy(document, buffer)
+                var pages = values.get(key)
+
+                document.open()
+                for (page in pages) {
+                    //expecting pagenumbers from array; so we offset here
+                    copy.addPage(copy.getImportedPage(reader, page.asInt()+1))
                 }
+                document.close()
+
+                result[key] = toBase64(buffer.toByteArray())
             }
 
-            stamper.setFormFlattening(json.get("flatten")?.asBoolean() ?: false);
-            stamper.close();
-            
-            response.type("application/pdf");
-            return buffer.toByteArray();
+            reader.close()
+
+            response.type("application/json")
+            return toJson(result)
         }
         catch ( e : InvalidPdfException) {
             println(e.message);
