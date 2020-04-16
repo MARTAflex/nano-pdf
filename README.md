@@ -1,5 +1,5 @@
 # nano-pdf
-REST microservice intended to provide functionaility similar to pdftk
+REST microservice intended to provide functionality similar to pdftk
 
     start via:
         ./gradlew run
@@ -10,7 +10,7 @@ REST microservice intended to provide functionaility similar to pdftk
         ./gradew build #which creates the necessary tarball
         docker build -t martaflex/nanopdf:0.0.1 .
 
-    unit test wil create ./some.pdf for manual review of the
+    unit test will create ./some.pdf for manual review of the
     modified pdf. this behavior will change obviously
 
     Routes:
@@ -39,6 +39,14 @@ REST microservice intended to provide functionaility similar to pdftk
             }
 
         response body: json array with a parsed String per page
+
+    POST /check-if-form       //checks if the pdf has AcroForm fields
+        request body:
+            {
+                "pdf": "TWFuIGl[....]pcyByZWF=", // base64 encoded pdf file
+            }
+
+        response text: true || false
 
     POST /group-pages       //merges picked pages
         request body:

@@ -8,4 +8,5 @@ fun Service () {
     FormFill();
     ToText();
     GroupPages();
+    CheckIfForm();
 }
