@@ -82,6 +82,29 @@ class FormFillTest {
     }
 
     @Test
+    fun PDFWithoutForm () {
+        val pdf = File("resources/test/form-fill-out.pdf").readBytes();
+        val pdf64 = String(Base64.getEncoder().encode(pdf));
+
+        val response = Unirest.post("http://127.0.0.1:9091/form-fill")
+            .header("Content-Type", "application/json")
+            .body("""
+            {
+                "data": {
+                    "firstname": "Periódicos",
+                    "lastname": "Españoles"
+                },
+                "flatten": true,
+                "pdf": "${ pdf64 }"
+            }
+            """)
+            .asBinary()
+
+        assertEquals(400, response.getStatus());
+        println(response.getBody());
+    }
+
+    @Test
     fun validPost () {
         val pdf = File("resources/test/form-fill.pdf").readBytes();
         val expected = File("resources/test/form-fill-out.pdf").readBytes();
@@ -102,9 +125,9 @@ class FormFillTest {
             .asBinary()
 
         assertEquals(200, response.getStatus());
-        
+
         // readbytes returns empty when called multiple times; is that intended?
-        val retrieved = response.getBody().readBytes(); 
+        val retrieved = response.getBody().readBytes();
 
 
         // we need to remove the lines with /Author and /Info

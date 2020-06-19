@@ -50,20 +50,29 @@ fun FormFill () {
             val stamper = PdfStamper(reader, buffer);
 
             val form = stamper.getAcroFields();
-            form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
-            val values = json.get("data");
 
-            for (key in values.fieldNames()) {
-                if (form.getField(key) != null) {
-                    form.setField(key, values.get(key).asText(""));
-                }
+            //check if there are any form fields
+            val fields = form.getFields();
+
+            if(fields.isEmpty()) {
+                halt(400, "pdf has no form fields");
             }
+            else {
+                form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
+                val values = json.get("data");
 
-            stamper.setFormFlattening(json.get("flatten")?.asBoolean() ?: false);
-            stamper.close();
-            
-            response.type("application/pdf");
-            return buffer.toByteArray();
+                for (key in values.fieldNames()) {
+                    if (form.getField(key) != null) {
+                        form.setField(key, values.get(key).asText(""));
+                    }
+                }
+
+                stamper.setFormFlattening(json.get("flatten")?.asBoolean() ?: false);
+                stamper.close();
+
+                response.type("application/pdf");
+                return buffer.toByteArray();
+            }
         }
         catch ( e : InvalidPdfException) {
             println(e.message);
