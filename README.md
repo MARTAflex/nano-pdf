@@ -8,7 +8,7 @@ REST microservice intended to provide functionality similar to pdftk
 
     create docker image in repo dir via:
         ./gradew build #which creates the necessary tarball
-        docker build -t martaflex/nanopdf:0.0.1 .
+        docker build -t martaflex/nanopdf:0.0.4 .
 
     unit test will create ./some.pdf for manual review of the
     modified pdf. this behavior will change obviously
@@ -47,6 +47,28 @@ REST microservice intended to provide functionality similar to pdftk
             }
 
         response text: true || false
+
+    POST /chunk-to-text       //checks if the pdf has AcroForm fields
+        request body:
+            {
+                "pdf": "TWFuIGl[....]pcyByZWF=", // base64 encoded pdf file,
+                "data" {
+                    "chunkSize": 10,
+                    "chunkIndex": 0
+
+                }
+            }
+
+        response body: json array with a parsed String per page in interval according to chunkSize and chunkIndex
+
+    POST /get-pdf-length      //get number of pages
+        request body:
+            {
+                "pdf": "TWFuIGl[....]pcyByZWF=", // base64 encoded pdf file
+            }
+
+        response text: length
+
 
     POST /group-pages       //merges picked pages
         request body:
