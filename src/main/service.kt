@@ -9,4 +9,5 @@ fun Service () {
     ToText();
     GroupPages();
     CheckIfForm();
+    GetPdfLength();
 }
