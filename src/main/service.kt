@@ -10,4 +10,5 @@ fun Service () {
     GroupPages();
     CheckIfForm();
     GetPdfLength();
+    ChunkToText();
 }
