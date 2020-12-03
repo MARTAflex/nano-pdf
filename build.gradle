@@ -50,7 +50,7 @@ test {
 
 jar {
     baseName = 'nano-pdf'
-    version = '0.0.4'
+    version = '0.0.5'
     mainClassName = 'MainKt'
     manifest {
         attributes 'Implementation-Title': 'Nano-PDF Microservice',
