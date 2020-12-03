@@ -63,11 +63,11 @@ fun ChunkToText () {
                 //offsetting because of arrayIndex
                 end = numberOfPages-1;
             }
-            println("numberOfPages" + numberOfPages);
-            println("start" + start);
-            println("end" + end);
+            //println("numberOfPages" + numberOfPages);
+            //println("start" + start);
+            //println("end" + end);
             for (i in start..end) {
-                println("i:" + i);
+                //println("i:" + i);
                 //offsetting i because start is arrayIndex
                 val strategy = parser.processContent(i+1, SimpleTextExtractionStrategy());
                 result.add(strategy.getResultantText());
