@@ -10,6 +10,9 @@ REST microservice intended to provide functionality similar to pdftk
         ./gradew build #which creates the necessary tarball
         docker build -t martaflex/nanopdf:0.0.5 .
 
+    run docker image via:
+        docker run -itd -p 127.0.0.1:9091:9091 martaflex/nanopdf:0.0.5
+
     unit test will create ./some.pdf for manual review of the
     modified pdf. this behavior will change obviously
 
