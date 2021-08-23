@@ -8,7 +8,7 @@ REST microservice intended to provide functionality similar to pdftk
 
     create docker image in repo dir via:
         ./gradew build #which creates the necessary tarball
-        docker build -t martaflex/nanopdf:0.0.5 .
+        docker build -t martaflex/nanopdf:0.0.6 .
 
     unit test will create ./some.pdf for manual review of the
     modified pdf. this behavior will change obviously
