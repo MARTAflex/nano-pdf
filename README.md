@@ -1,8 +1,18 @@
 # nano-pdf
 REST microservice intended to provide functionality similar to pdftk
 
+    prerequisites:
+    Best use sdkman
+    ```
+        sdk install java 8.0.302-open 
+        sdk install kotlin 1.1.2-2
+        sdk install gradle 3.5
+    ```
+
     start via:
         ./gradlew run
+        or
+        gradle run
 
     port: 9091
 
