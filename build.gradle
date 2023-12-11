@@ -29,6 +29,9 @@ dependencies {
     // pdf library that suppirts form flattening (used by pdftk)
     compile 'com.itextpdf:itextpdf:5.5.11'
 
+    // pdf library that supports form flattening/better licensing
+    compile 'org.apache.pdfbox:pdfbox:3.0.1'
+
     // Test Dependencies
     // unit testing framework that sucks balls (FIXME: any other options?)
     testCompile 'junit:junit:4.12'
