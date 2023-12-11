@@ -1,14 +1,31 @@
 # nano-pdf
 REST microservice intended to provide functionality similar to pdftk
 
+prerequisites:
+Best use sdkman
+```
+sdk env install 
+```
+or
+```
+sdk install java 8.0.302-open 
+sdk install kotlin 1.1.2-2
+sdk install gradle 3.5
+```
+
     start via:
         ./gradlew run
+        or
+        gradle run
 
     port: 9091
 
     create docker image in repo dir via:
         ./gradew build #which creates the necessary tarball
-        docker build -t martaflex/nanopdf:0.0.4 .
+        docker build -t martaflex/nanopdf:0.0.6 .
+
+    run docker image via:
+        docker run -itd -p 127.0.0.1:9091:9091 martaflex/nanopdf:0.0.5
 
     unit test will create ./some.pdf for manual review of the
     modified pdf. this behavior will change obviously
