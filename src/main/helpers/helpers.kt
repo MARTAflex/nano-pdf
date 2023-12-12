@@ -2,12 +2,18 @@ package de.martaflex.nanopdf.helpers
 
 import java.io.*
 import java.util.Base64
+import java.awt.Color
 
 import spark.Spark.*
 import spark.ResponseTransformer
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 data class Error(
     val status: Int,
@@ -44,4 +50,30 @@ fun fromBase64 (s : String) : ByteArray? {
 
 fun toBase64 (bytes : ByteArray) : String {
     return String(Base64.getEncoder().encode(bytes));
+}
+
+fun drawRectanglesOnPage (doc : PDDocument, page : PDPage, rectangles : ArrayList<PDRectangle>) {
+    var contentStream = PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
+
+    contentStream.setStrokingColor(Color.GREEN);
+    for (rect in rectangles) {
+        // left
+        contentStream.moveTo(rect.getLowerLeftX(), rect.getLowerLeftY());
+        contentStream.lineTo(rect.getLowerLeftX(), rect.getUpperRightY());
+        contentStream.stroke();
+        // top
+        contentStream.moveTo(rect.getLowerLeftX(), rect.getUpperRightY());
+        contentStream.lineTo(rect.getUpperRightX(), rect.getUpperRightY());
+        contentStream.stroke();
+        // right
+        contentStream.moveTo(rect.getUpperRightX(), rect.getLowerLeftY());
+        contentStream.lineTo(rect.getUpperRightX(), rect.getUpperRightY());
+        contentStream.stroke();
+        // bottom
+        contentStream.moveTo(rect.getLowerLeftX(), rect.getLowerLeftY());
+        contentStream.lineTo(rect.getUpperRightX(), rect.getLowerLeftY());
+        contentStream.stroke();
+    }
+    
+    contentStream.close()
 }

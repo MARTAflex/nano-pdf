@@ -11,4 +11,5 @@ fun Service () {
     CheckIfForm();
     GetPdfLength();
     ChunkToText();
+    DrawRectangles();
 }
