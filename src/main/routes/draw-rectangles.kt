@@ -43,14 +43,29 @@ fun DrawRectangles () {
 
         // FIXME: im basically 100%sure that this will never be null
         val pdf = fromBase64(json.get("pdf").asText())!!;
+        val values = json.get("data");
 
         try {
             val doc = Loader.loadPDF(pdf);
             var buffer = ByteArrayOutputStream()
-
-
             var rectangles: ArrayList<PDRectangle> = ArrayList<PDRectangle>()
-            rectangles.add(PDRectangle( 10.toFloat(), 280.toFloat(), 275.toFloat(), 60.toFloat() ))
+
+            for (key in values.fieldNames()) {
+                var rect = values.get(key)
+                var x = rect.get("x").asText();
+                var y = rect.get("y").asText();
+                var width = rect.get("width").asText();
+                var height = rect.get("height").asText();
+                rectangles.add(
+                    PDRectangle( 
+                        x.toFloat(),
+                        y.toFloat(),
+                        width.toFloat(),
+                        height.toFloat()
+                    )
+                )
+            }
+            
 
             for (page in doc.getPages().iterator()) {
                 drawRectanglesOnPage(doc,page,rectangles);
