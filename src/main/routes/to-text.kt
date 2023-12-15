@@ -46,9 +46,9 @@ fun ToText () {
             val parser = PdfReaderContentParser(reader);
 
             for (i in 1..reader.getNumberOfPages()) {
-                 val strategy = parser.processContent(i, SimpleTextExtractionStrategy());
-                 result.add(strategy.getResultantText());
-                 // #2  result.add(PdfTextExtractor.getTextFromPage(reader, i))
+                val strategy = parser.processContent(i, SimpleTextExtractionStrategy());
+                result.add(strategy.getResultantText());
+                // #2  result.add(PdfTextExtractor.getTextFromPage(reader, i))
             }
             reader.close()
 
