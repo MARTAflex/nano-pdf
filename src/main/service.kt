@@ -12,4 +12,5 @@ fun Service () {
     GetPdfLength();
     ChunkToText();
     DrawRectangles();
+    GetPageDimensions();
 }
