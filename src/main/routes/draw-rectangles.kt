@@ -50,8 +50,8 @@ fun DrawRectangles () {
             var buffer = ByteArrayOutputStream()
             var rectangles: ArrayList<PDRectangle> = ArrayList<PDRectangle>()
 
-            val maxX =doc.getPage(0).mediaBox.width.toInt();
-            val maxY =doc.getPage(0).mediaBox.height.toInt();
+            val maxX = doc.getPage(0).mediaBox.width.toInt();
+            val maxY = doc.getPage(0).mediaBox.height.toInt();
 
             for (key in values.fieldNames()) {
                 val rect = values.get(key)
