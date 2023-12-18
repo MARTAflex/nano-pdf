@@ -13,4 +13,5 @@ fun Service () {
     ChunkToText();
     DrawRectangles();
     GetPageDimensions();
+    AreasToText();
 }
