@@ -50,16 +50,24 @@ fun DrawRectangles () {
             var buffer = ByteArrayOutputStream()
             var rectangles: ArrayList<PDRectangle> = ArrayList<PDRectangle>()
 
+            val maxX =doc.getPage(0).mediaBox.width.toInt();
+            val maxY =doc.getPage(0).mediaBox.height.toInt();
+
             for (key in values.fieldNames()) {
-                var rect = values.get(key)
-                var x = rect.get("x").asText();
-                var y = rect.get("y").asText();
-                var width = rect.get("width").asText();
-                var height = rect.get("height").asText();
+                val rect = values.get(key)
+                val x = rect.get("x").asText();
+                val y = rect.get("y").asText();
+                val width = rect.get("width").asText();
+                val height = rect.get("height").asText();
+
+                val adjustedY = y.toInt() + height.toInt();
+
+                val (topLeftX, topLeftY) = translateCoordinates(x.toInt(), adjustedY, maxX, maxY);
+
                 rectangles.add(
-                    PDRectangle( 
-                        x.toFloat(),
-                        y.toFloat(),
+                    PDRectangle(
+                        topLeftX.toFloat(),
+                        topLeftY.toFloat(),
                         width.toFloat(),
                         height.toFloat()
                     )

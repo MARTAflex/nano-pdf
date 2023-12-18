@@ -77,3 +77,11 @@ fun drawRectanglesOnPage (doc : PDDocument, page : PDPage, rectangles : ArrayLis
     
     contentStream.close()
 }
+
+//Rectangle has origin(0,0) in topLeft corner
+//pdfbox PDRectangle() has origin(0,0) in bottomLeft corner
+fun translateCoordinates(bottomLeftX: Int, bottomLeftY: Int, maxX: Int, maxY: Int): Pair<Int, Int> {
+    val topLeftX = bottomLeftX
+    val topLeftY = maxY - bottomLeftY
+    return Pair(topLeftX, topLeftY)
+}
