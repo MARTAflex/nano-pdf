@@ -10,11 +10,15 @@ import spark.ResponseTransformer
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.util.JSONPObject
+import com.sun.xml.internal.ws.util.ByteArrayBuffer
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.rendering.PDFRenderer
+import javax.imageio.ImageIO
 
 // #2 is another variant of parsing; in this version the order of the resultingText
 // is more line based
@@ -38,14 +42,30 @@ fun GetPageDimensions () {
 
         // FIXME: im basically 100%sure that this will never be null
         val pdf = fromBase64(json.get("pdf").asText())!!
-        val result = ArrayList<FloatArray>()
+        val dimensions = ArrayList<FloatArray>()
 
         try {
             val doc = Loader.loadPDF(pdf);
 
-            for (page in doc.getPages().iterator()) {
-                result.add(page.getMediaBox().getCOSArray().toFloatArray())
+            for (page in doc.pages.iterator()) {
+                dimensions.add(page.mediaBox.cosArray.toFloatArray())
             }
+
+
+            data class GetPageDimensionsResult (
+                val dimensions: ArrayList<FloatArray>,
+                val firstPageImageBase64: String
+            )
+
+            val renderer = PDFRenderer(doc)
+            val firstPageImage = renderer.renderImage(0);
+            val imageOut = ByteArrayOutputStream();
+            ImageIO.write(firstPageImage,"png", imageOut)
+
+            val result = GetPageDimensionsResult(
+                dimensions,
+                String(Base64.getEncoder().encode(imageOut.toByteArray()))
+            )
 
             response.type("application/json")
             return toJson(result)
