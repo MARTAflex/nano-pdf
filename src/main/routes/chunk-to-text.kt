@@ -16,6 +16,8 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.text.PDFTextStripper
 
 // #2 is another variant of parsing; in this version the order of the resultingText
 // is more line based
@@ -53,10 +55,13 @@ fun ChunkToText () {
         val result = ArrayList<String>();
 
         try {
-            val reader = PdfReader(pdf)
-            val parser = PdfReaderContentParser(reader);
-            val numberOfPages = reader.getNumberOfPages();
-            var start = chunkIndex * chunkSize;
+            val doc = Loader.loadPDF(pdf);
+            val stripper = PDFTextStripper();
+
+            stripper.sortByPosition = true;
+
+            val numberOfPages = doc.numberOfPages;
+            val start = chunkIndex * chunkSize;
             var end = ((chunkIndex * chunkSize) + chunkSize) - 1;
             //for last chunk
             if (end > numberOfPages) {
@@ -69,11 +74,11 @@ fun ChunkToText () {
             for (i in start..end) {
                 //println("i:" + i);
                 //offsetting i because start is arrayIndex
-                val strategy = parser.processContent(i+1, SimpleTextExtractionStrategy());
-                result.add(strategy.getResultantText());
-                // #2  result.add(PdfTextExtractor.getTextFromPage(reader, i))
+                stripper.startPage = i+1;
+                stripper.endPage = i+1;
+
+                result.add(stripper.getText(doc));
             }
-            reader.close()
 
             response.type("application/json")
             return toJson(result)
