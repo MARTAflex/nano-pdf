@@ -11,17 +11,8 @@ import spark.ResponseTransformer
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.text.PDFTextStripper
-
-// #2 is another variant of parsing; in this version the order of the resultingText
-// is more line based
-// #2 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
 fun ChunkToText () {
     post("/chunk-to-text", "application/json", fun(request, response) : Any {
@@ -83,7 +74,7 @@ fun ChunkToText () {
             response.type("application/json")
             return toJson(result)
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }
