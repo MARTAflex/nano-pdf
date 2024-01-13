@@ -100,9 +100,7 @@ class ToTextTest {
 
         val retrieved = response.getBody()
 
-        val expected =
-        """["Firstname:\nLastname:\nPeriódicos\nEspañoles","Firstname:\nLastname:\nPeriódicos\nEspañoles"]"""
-
+        val expected = """["Firstname: Periódicos\nLastname: Españoles\n","Firstname: Periódicos\nLastname: Españoles\n"]"""
         assertEquals(expected, retrieved)
     }
 

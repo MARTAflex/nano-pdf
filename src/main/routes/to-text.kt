@@ -3,23 +3,14 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
-import java.util.Base64
 
 import spark.Spark.*
-import spark.ResponseTransformer
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
-
-// #2 is another variant of parsing; in this version the order of the resultingText
-// is more line based
-// #2 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.text.PDFTextStripper
 
 fun ToText () {
     post("/to-text", "application/json", fun(request, response) : Any {
@@ -42,20 +33,22 @@ fun ToText () {
         val result = ArrayList<String>()
 
         try {
-            val reader = PdfReader(pdf)
-            val parser = PdfReaderContentParser(reader);
+            val doc = Loader.loadPDF(pdf);
+            val stripper = PDFTextStripper();
 
-            for (i in 1..reader.getNumberOfPages()) {
-                val strategy = parser.processContent(i, SimpleTextExtractionStrategy());
-                result.add(strategy.getResultantText());
-                // #2  result.add(PdfTextExtractor.getTextFromPage(reader, i))
+            stripper.sortByPosition = true;
+
+            for (i in 1..doc.numberOfPages) {
+                stripper.startPage = i;
+                stripper.endPage = i;
+
+                result.add(stripper.getText(doc));
             }
-            reader.close()
 
             response.type("application/json")
             return toJson(result)
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }
