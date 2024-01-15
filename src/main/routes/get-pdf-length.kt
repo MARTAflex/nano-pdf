@@ -16,6 +16,7 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import org.apache.pdfbox.Loader
 
 // #2 is another variant of parsing; in this version the order of the resultingText
 // is more line based
@@ -41,11 +42,13 @@ fun GetPdfLength () {
         val pdf = fromBase64(json.get("pdf").asText())!!
 
         try {
-            val reader = PdfReader(pdf)
+            val doc = Loader.loadPDF(pdf)
+            val numberOfPages = doc.numberOfPages;
 
+            doc.close();
 
             response.type("application/json")
-            return reader.getNumberOfPages()
+            return numberOfPages;
         }
         catch ( e : InvalidPdfException) {
             println(e.message);
