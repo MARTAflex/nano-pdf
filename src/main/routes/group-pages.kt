@@ -3,13 +3,8 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
-import java.util.Base64
 
 import spark.Spark.*
-import spark.ResponseTransformer
-
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.core.JsonParseException
 
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.multipdf.PDFMergerUtility

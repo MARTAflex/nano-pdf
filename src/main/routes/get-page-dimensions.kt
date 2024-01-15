@@ -6,23 +6,10 @@ import java.io.*
 import java.util.Base64
 
 import spark.Spark.*
-import spark.ResponseTransformer
-
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.databind.util.JSONPObject
-import com.sun.xml.internal.ws.util.ByteArrayBuffer
 
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.PDFRenderer
 import javax.imageio.ImageIO
-
-// #2 is another variant of parsing; in this version the order of the resultingText
-// is more line based
-// #2 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
 fun GetPageDimensions () {
     post("/get-page-dimensions", "application/json", fun(request, response) : Any {

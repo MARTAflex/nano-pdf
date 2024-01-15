@@ -1,12 +1,10 @@
 package de.martaflex.nanopdf.routes
 
-import com.fasterxml.jackson.databind.*
 import de.martaflex.nanopdf.helpers.*
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.text.PDFTextStripperByArea
 import spark.Spark.*
 import java.awt.Rectangle
-import java.io.*
 
 
 fun AreasToText () {

@@ -6,9 +6,6 @@ import java.io.*
 
 import spark.Spark.*
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.core.JsonParseException
-
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.text.PDFTextStripper
 
