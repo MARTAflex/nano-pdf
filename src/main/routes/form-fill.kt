@@ -11,14 +11,7 @@ import spark.ResponseTransformer
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
 
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.BarcodeQRCode;
-import com.itextpdf.text.pdf.qrcode.*;
-import com.itextpdf.text.Image;
+import org.apache.pdfbox.Loader
 
 fun FormFill () {
     post("/form-fill", "application/json", fun(request, response) : Any {
@@ -56,30 +49,30 @@ fun FormFill () {
         val pdf = fromBase64(json.get("pdf").asText())!!;
 
         try {
-            val reader = PdfReader(pdf);
+            val doc = Loader.loadPDF(pdf);
             val buffer = ByteArrayOutputStream();
-            val stamper = PdfStamper(reader, buffer);
+            val acroForm = doc.documentCatalog.acroForm
 
-            val form = stamper.getAcroFields();
 
-            //check if there are any form fields
-            val fields = form.getFields();
-
-            if(fields.isEmpty()) {
+            if(acroForm.fields.isEmpty()) {
                 halt(400, "pdf has no form fields");
             }
             else {
-                form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
+                //form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
                 val values = json.get("data");
 
                 for (key in values.fieldNames()) {
-                    if (form.getField(key) != null) {
-                        form.setField(key, values.get(key).asText(""));
+                    val field = acroForm.getField(key);
+                    if (field != null) {
+                        field.setValue(values.get(key).asText(""));
                     }
                 }
 
-                stamper.setFormFlattening(json.get("flatten")?.asBoolean() ?: false);
-                
+                if (json.get("flatten")?.asBoolean() == true) {
+                    acroForm.flatten();
+                }
+
+                /*
                 //QRCode stuff
                 if (json.get("qrcode") != null && json.get("qrcode").isObject()) {
                     val lastPage = reader.getNumberOfPages();
@@ -123,14 +116,15 @@ fun FormFill () {
                         over.addImage(qrimage);
                     }
                 }
-
-                stamper.close();
+                */
+                doc.save(buffer);
+                doc.close();
 
                 response.type("application/pdf");
                 return buffer.toByteArray();
             }
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }
