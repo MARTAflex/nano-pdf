@@ -53,8 +53,7 @@ fun FormFill () {
             val buffer = ByteArrayOutputStream();
             val acroForm = doc.documentCatalog.acroForm
 
-
-            if(acroForm.fields.isEmpty()) {
+            if( acroForm == null || acroForm.fields.isEmpty()) {
                 halt(400, "pdf has no form fields");
             }
             else {

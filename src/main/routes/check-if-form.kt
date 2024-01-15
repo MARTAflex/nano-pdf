@@ -39,11 +39,15 @@ fun CheckIfForm () {
         try {
             val doc = Loader.loadPDF(pdf);
             val catalog = doc.documentCatalog;
-            val acroForm = catalog.acroForm.fields.isEmpty();
+            val acroForm = catalog.acroForm
+            var hasFormFields = false;
 
+            if (acroForm != null) {
+                hasFormFields = !acroForm.fields.isEmpty();
+            }
             doc.close();
-            //inverse check-if-form true->!empty
-            return !acroForm
+
+            return hasFormFields
         }
         catch ( e : IOException) {
             println(e.message);
