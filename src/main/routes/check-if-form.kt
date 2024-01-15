@@ -15,6 +15,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.exceptions.InvalidPdfException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import org.apache.pdfbox.Loader
 
 fun CheckIfForm () {
     post("/check-if-form", "application/json", fun(request, response) : Any {
@@ -36,21 +37,14 @@ fun CheckIfForm () {
         val pdf = fromBase64(json.get("pdf").asText())!!;
 
         try {
-            val reader = PdfReader(pdf);
-            val buffer = ByteArrayOutputStream();
-            val stamper = PdfStamper(reader, buffer);
+            val doc = Loader.loadPDF(pdf);
+            val catalog = doc.documentCatalog;
+            val acroForm = catalog.acroForm;
 
-            val form = stamper.getAcroFields();
-            val fields = form.getFields();
-
-            if(fields.isEmpty()) {
-                return false
-            }
-            else {
-                return true
-            }
+            doc.close();
+            return acroForm != null
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }
