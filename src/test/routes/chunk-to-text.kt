@@ -106,7 +106,7 @@ class ChunkToTextTest {
         val retrieved = response.getBody()
 
         val expected =
-        """["Firstname:\nLastname:\nPeriódicos\nEspañoles"]"""
+        """["Firstname: Periódicos\nLastname: Españoles\n"]"""
 
         assertEquals(expected, retrieved)
     }
