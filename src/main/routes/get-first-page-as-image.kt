@@ -11,8 +11,8 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.rendering.PDFRenderer
 import javax.imageio.ImageIO
 
-fun GetPageDimensions () {
-    post("/get-page-dimensions", "application/json", fun(request, response) : Any {
+fun GetFirstPageAsImage () {
+    post("/get-first-page-as-image", "application/json", fun(request, response) : Any {
         val body = request.body();
 
         if (body == "") {
@@ -29,14 +29,16 @@ fun GetPageDimensions () {
 
         // FIXME: im basically 100%sure that this will never be null
         val pdf = fromBase64(json.get("pdf").asText())!!
-        val result = ArrayList<FloatArray>()
 
         try {
             val doc = Loader.loadPDF(pdf);
 
-            for (page in doc.pages.iterator()) {
-                result.add(page.mediaBox.cosArray.toFloatArray())
-            }
+            val renderer = PDFRenderer(doc)
+            val firstPageImage = renderer.renderImage(0);
+            val imageOut = ByteArrayOutputStream();
+            ImageIO.write(firstPageImage,"png", imageOut)
+
+            val result = String(Base64.getEncoder().encode(imageOut.toByteArray()))
 
             response.type("application/json")
             return toJson(result)
