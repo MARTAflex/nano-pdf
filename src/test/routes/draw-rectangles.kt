@@ -135,29 +135,25 @@ class DrawRectanglesTest {
 
 
         // we need to remove the lines with /Author and /Info
-        // since theese contain data that is generated dynamically whenever the pdf
+        // since these contain data that is generated dynamically whenever the pdf
         // is modified (e.g. modification timestamp)
 
         var se = String(expected);
         var sr = String(retrieved);
 
         // remove /ModDate from content
-        var rx = """\/ModDate\([^\)]+\)""".toRegex();
+        var rx = """/ModDate\([^)]+\)""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
 
         // remove id from content
-        rx = """\/ID\s+\[[^\]]+\]""".toRegex();
+        rx = """/ID\s+\[[^]]+]""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
 
-        // remove itext comment since version might also change
-        rx = """%iText-.*""".toRegex();
-        se = se.replace(rx, "");
-        sr = sr.replace(rx, "");
 
         // remove /Producer which contains itext and open office version
-        rx = """\/Producer\(([^\\][^\)])+[^\\]\)""".toRegex();
+        rx = """/Producer\(([^\\][^)])+[^\\]\)""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
 
