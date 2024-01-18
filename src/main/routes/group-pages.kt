@@ -1,5 +1,6 @@
 package de.martaflex.nanopdf.routes
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
@@ -36,28 +37,25 @@ fun GroupPages () {
 
         // FIXME: im basically 100%sure that this will never be null
         val pdf = fromBase64(json.get("pdf").asText())!!;
-
         try {
             val doc = Loader.loadPDF(pdf);
             val values = json.get("data")
-            var result: MutableMap<String, String> = mutableMapOf()
+            val result: MutableMap<String, String> = mutableMapOf()
 
             for (key in values.fieldNames()) {
-                var newDocument = PDDocument();
-                var outputBuffer = ByteArrayOutputStream()
-                val merger = PDFMergerUtility();
+                val newDocument = PDDocument();
+                val outputBuffer = ByteArrayOutputStream()
                 //this is 0-based array
-                var pages = values.get(key);
+                val pages = values.get(key);
 
                 for (pageNumber in pages) {
-                    newDocument.addPage(doc.getPage(pageNumber.asInt() + 1))
+                    newDocument.importPage(doc.getPage(pageNumber.asInt() + 1))
                 }
                 newDocument.save(outputBuffer)
+                newDocument.close()
 
                 result[key] = toBase64(outputBuffer.toByteArray())
             }
-
-            doc.close()
 
             response.type("application/json")
             return toJson(result)
