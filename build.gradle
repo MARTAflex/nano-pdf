@@ -26,9 +26,6 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-core:2.16.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 
-    // pdf library that suppirts form flattening (used by pdftk)
-    compile 'com.itextpdf:itextpdf:5.5.11'
-
     // pdf library that supports form flattening/better licensing
     compile 'org.apache.pdfbox:pdfbox:3.0.1'
 

@@ -152,7 +152,7 @@ class DrawRectanglesTest {
         sr = sr.replace(rx, "");
 
 
-        // remove /Producer which contains itext and open office version
+        // remove /Producer which contains open office version
         rx = """/Producer\(([^\\][^)])+[^\\]\)""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
