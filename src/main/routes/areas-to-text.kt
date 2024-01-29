@@ -51,11 +51,11 @@ fun AreasToText () {
                 val height = base.get("height").asText();
 
                 val rect = Rectangle(x.toInt(), y.toInt(), width.toInt(), height.toInt())
-                    stripper.addRegion(
-                        key,
-                        rect
-                    );
-                }
+                stripper.addRegion(
+                    key,
+                    rect
+                );
+            }
 
             for (page in doc.pages.iterator()) {
                 stripper.extractRegions( page )
