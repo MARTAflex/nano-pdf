@@ -5,14 +5,15 @@ import de.martaflex.nanopdf.routes.*
 
 fun Service () {
     port(9091)
-    FormFill();
-    ToText();
-    GroupPages();
-    CheckIfForm();
-    GetPdfLength();
-    ChunkToText();
-    DrawRectangles();
-    GetPageDimensions();
-    GetFirstPageAsImage();
-    AreasToText();
+    FormFill()
+    ToText()
+    GroupPages()
+    CheckIfForm()
+    GetPdfLength()
+    ChunkToText()
+    DrawRectangles()
+    GetPageDimensions()
+    GetFirstPageAsImage()
+    AreasToText()
+    RegexToText()
 }
