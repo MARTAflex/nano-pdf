@@ -1,5 +1,5 @@
 # Enable auto-env through the sdkman_auto_env config
 # Add key=value pairs of SDKs to use below
-java=8.0.302-open
+java=8.0.402-tem
 kotlin=1.1.2-2
 gradle=3.5
