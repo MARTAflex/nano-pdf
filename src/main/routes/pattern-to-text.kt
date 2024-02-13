@@ -6,8 +6,8 @@ import org.apache.pdfbox.text.PDFTextStripper
 import spark.Spark.*
 import java.util.ArrayList
 
-fun RegexToText() {
-    post("/regex-to-text", "application/json", fun(request, response) : Any {
+fun PatternToText() {
+    post("/pattern-to-text", "application/json", fun(request, response) : Any {
         val body = request.body()
 
         if (body == "") {
@@ -39,11 +39,10 @@ fun RegexToText() {
             stripper.sortByPosition = true
 
             //regex patterns
-            val regexPatterns: MutableMap<String, Regex> = mutableMapOf<String, Regex>()
+            val patterns: MutableMap<String, Regex> = mutableMapOf<String, Regex>()
 
             for (key in values.fieldNames()) {
-                val patternString = values.get(key).asText()
-                regexPatterns[key] = Regex(patternString, RegexOption.IGNORE_CASE)
+                patterns[key] = Regex(values.get(key).asText(), RegexOption.IGNORE_CASE)
             }
 
             val results = ArrayList<MutableMap<String, ArrayList<String>>>()
@@ -56,7 +55,7 @@ fun RegexToText() {
                 val text = stripper.getText(doc)
                 val matches: MutableMap<String, ArrayList<String>> = mutableMapOf<String, ArrayList<String>>()
 
-                for (regex in regexPatterns.iterator()) {
+                for (regex in patterns.iterator()) {
                     val test = ArrayList<String>()
                     for ( match in regex.value.findAll(text).iterator()) {
                         test.add(match.value)

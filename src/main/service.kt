@@ -15,5 +15,5 @@ fun Service () {
     GetPageDimensions()
     GetFirstPageAsImage()
     AreasToText()
-    RegexToText()
+    PatternToText()
 }
