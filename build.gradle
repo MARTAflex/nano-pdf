@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.8.20'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20'
     //id 'com.bmuschko.docker-java-application' version '3.0.6'
 }
 
@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     // kotlin stdlib to get kotlin to do anything
-    implementation('org.jetbrains.kotlin:kotlin-stdlib:1.8.20')
+    implementation('org.jetbrains.kotlin:kotlin-stdlib:1.9.20')
 
     // spark rest framework
     implementation('com.sparkjava:spark-core:2.9.4')
@@ -53,11 +53,11 @@ test {
 
 jar {
     archiveFileName = 'nano-pdf'
-    archiveVersion = System.properties['appVersion']
+    archiveVersion = version
     mainClassName = 'MainKt'
     manifest {
         attributes 'Implementation-Title': 'Nano-PDF Microservice',
-                   'Implementation-Version': archiveVersion,
+                   'Implementation-Version': version,
                    'Main-Class': mainClassName
     }
 }
