@@ -6,7 +6,8 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    //jcenter() EOS 01.02.2022
+    mavenCentral()
     maven { url "https://jitpack.io" }
 }
 
@@ -15,7 +16,7 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1.2-2'
 
     // spark rest framework
-    compile 'com.sparkjava:spark-core:2.6.0'
+    compile 'com.sparkjava:spark-core:2.9.4'
     // needed in spark 2.5 to get rid of
     // > Failed to load class "org.slf4j.impl.StaticLoggerBinder".
     // error message and enable logging
@@ -31,7 +32,7 @@ dependencies {
 
     // Test Dependencies
     // unit testing framework that sucks balls (FIXME: any other options?)
-    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.13.2'
     // convenient request library
     testCompile 'com.mashape.unirest:unirest-java:1.4.8'
 }
@@ -50,7 +51,7 @@ test {
 
 jar {
     baseName = 'nano-pdf'
-    version = '0.0.6'
+    version = '0.0.7'
     mainClassName = 'MainKt'
     manifest {
         attributes 'Implementation-Title': 'Nano-PDF Microservice',
