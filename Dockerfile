@@ -5,5 +5,5 @@ RUN apk add --no-cache msttcorefonts-installer fontconfig font-liberation  font-
 RUN fc-cache -f -v
 
 ADD build/distributions/nanoPdf-0.0.7.tar /
-ENTRYPOINT ["/nano-pdf/bin/nano-pdf"]
+ENTRYPOINT ["/nanoPdf-0.0.7/bin/nanoPdf"]
 EXPOSE 9091
