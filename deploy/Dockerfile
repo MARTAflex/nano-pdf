@@ -1,0 +1,9 @@
+FROM eclipse-temurin:8-jre-alpine
+LABEL authors="Jan Schwalbe - jan.schwalbe@martaflex.de, Julius Bischoff - julius.bischoff@martaflex.de"
+
+RUN apk add --no-cache msttcorefonts-installer fontconfig font-liberation  font-dejavu 
+RUN fc-cache -f -v
+
+ADD build/distributions/nano-pdf-0.0.7.tar /
+ENTRYPOINT ["/nano-pdf-0.0.7/bin/nano-pdf"]
+EXPOSE 9091
