@@ -1,1 +1,1 @@
-rootProject.name = "nanoPdf"
+rootProject.name = "nano-pdf"

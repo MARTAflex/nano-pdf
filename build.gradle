@@ -56,9 +56,9 @@ jar {
     archiveVersion = version
     mainClassName = 'MainKt'
     manifest {
-        attributes 'Implementation-Title': 'Nano-PDF Microservice',
-                   'Implementation-Version': version,
-                   'Main-Class': mainClassName
+        attributes  'Implementation-Title': 'Nano-PDF Microservice',
+                    'Implementation-Version': version,
+                    'Main-Class': mainClassName
     }
 }
 

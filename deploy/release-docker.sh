@@ -36,6 +36,9 @@ sed -i -E "s/(nano-pdf-)[0-9]+\.[0-9]+\.[0-9]+/\1$CODE_VERSION/" ./Dockerfile
 cd $REPODIR
 sed -i 's/version = "\(.*\)"/version = "'$CODE_VERSION'"/' ./build.gradle
 
+# Source the SDKMAN! init script to set up the environment
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
 # make sure we have the right sdk versions
 sdk env install
 ./gradlew clean build
