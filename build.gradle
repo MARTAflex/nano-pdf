@@ -37,7 +37,7 @@ dependencies {
     testImplementation('com.mashape.unirest:unirest-java:1.4.8')
 }
 
-version = "0.0.7"
+version = "0.0.8"
 
 sourceSets {
     main.kotlin.srcDirs += 'src/main/'
