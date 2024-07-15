@@ -47,9 +47,8 @@ fun GroupPages () {
                 val outputBuffer = ByteArrayOutputStream()
                 //this is 0-based array
                 val pages = values.get(key);
-
                 for (pageNumber in pages) {
-                    newDocument.importPage(doc.getPage(pageNumber.asInt() + 1))
+                    newDocument.importPage(doc.getPage(pageNumber.asInt()))
                 }
                 newDocument.save(outputBuffer)
                 newDocument.close()
