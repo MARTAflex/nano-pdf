@@ -1,7 +1,7 @@
 package de.martaflex.nanopdf
 
-import spark.Spark.*
 import de.martaflex.nanopdf.routes.*
+import spark.Spark.port
 
 fun Service () {
     port(9091)
@@ -14,6 +14,7 @@ fun Service () {
     DrawRectangles()
     GetPageDimensions()
     GetFirstPageAsImage()
+    GetFormFields()
     AreasToText()
     PatternToText()
 }

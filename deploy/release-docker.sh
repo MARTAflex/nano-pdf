@@ -28,7 +28,6 @@ echo
 printf ">>> Press enter to continue"
 read _
 
-echo build and upload finshed --- $FULL_VERSION
 # FIXME: ctrl-c behavior is wierd ... kinda keeps going
 
 sed -i -E "s/(nano-pdf-)[0-9]+\.[0-9]+\.[0-9]+/\1$CODE_VERSION/" ./Dockerfile
