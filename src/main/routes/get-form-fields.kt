@@ -23,7 +23,7 @@ data class FieldInfo(
     val page: Int,
     val fontSize: String? = null,
     val fontWeight: String? = null,
-    val alignment: String? = null,
+    val quadding: String? = null,
 )
 
 fun GetFormFields () {
@@ -59,6 +59,7 @@ fun GetFormFields () {
                     val widget = field.widgets[0]
                     val rect = widget.rectangle
                     val page = doc.pages.indexOf(widget.page)
+                    val type = getFieldType(field)
 
                     result.add(
                         FieldInfo(
@@ -69,11 +70,11 @@ fun GetFormFields () {
                             y = rect.lowerLeftY,
                             width = rect.width,
                             height = rect.height,
-                            type = getFieldType(field),
+                            type = type,
                             page = page,
                             fontSize = getFontSize(widget),
                             fontWeight = getFontWeight(widget),
-                            alignment = getAlignment(widget),
+                            quadding = getQuadding(field),
                         )
                     )
                 }
@@ -106,18 +107,21 @@ private fun getFieldType(field: PDField): String {
 }
 
 private fun getFontSize(widget: PDAnnotationWidget): String? {
-    val appearance = widget.appearance?.getNormalAppearance()
+    val appearance = widget.appearance?.normalAppearance
     return appearance?.toString() // This may vary depending on your PDF structure
 }
 
 private fun getFontWeight(widget: PDAnnotationWidget): String? {
     // You might need to analyze the font dictionary in the appearance stream
-    val appearance = widget.appearance?.getNormalAppearance()
+    val appearance = widget.appearance?.normalAppearance
     return appearance?.toString() // Adjust according to your PDF structure
 }
 
-private fun getAlignment(widget: PDAnnotationWidget): String? {
-    // Alignment is not typically stored in a standard way in PDF forms
-    // This may require custom logic based on how you've set up your PDFs
-    return "-" // Default or implement logic based on field properties
+private fun getQuadding(field: PDField): String? {
+    return if (field is PDTextField) {
+        field.q.toString()
+    }
+    else {
+        "-"
+    }
 }
