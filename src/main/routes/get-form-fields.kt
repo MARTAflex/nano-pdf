@@ -4,7 +4,6 @@ import de.martaflex.nanopdf.helpers.fromBase64
 import de.martaflex.nanopdf.helpers.fromJson
 import de.martaflex.nanopdf.helpers.toJson
 import org.apache.pdfbox.Loader
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationWidget
 import org.apache.pdfbox.pdmodel.interactive.form.*
 import spark.Spark.halt
 import spark.Spark.post
@@ -21,8 +20,7 @@ data class FieldInfo(
     val height: Float,
     val type: String,
     val page: Int,
-    val fontSize: String? = null,
-    val fontWeight: String? = null,
+    val defaultAppearance: String? = null,
     val quadding: String? = null,
 )
 
@@ -72,8 +70,7 @@ fun GetFormFields () {
                             height = rect.height,
                             type = type,
                             page = page,
-                            fontSize = getFontSize(widget),
-                            fontWeight = getFontWeight(widget),
+                            defaultAppearance = getDefaultAppearance(field),
                             quadding = getQuadding(field),
                         )
                     )
@@ -106,15 +103,12 @@ private fun getFieldType(field: PDField): String {
     }
 }
 
-private fun getFontSize(widget: PDAnnotationWidget): String? {
-    val appearance = widget.appearance?.normalAppearance
-    return appearance?.toString() // This may vary depending on your PDF structure
-}
-
-private fun getFontWeight(widget: PDAnnotationWidget): String? {
-    // You might need to analyze the font dictionary in the appearance stream
-    val appearance = widget.appearance?.normalAppearance
-    return appearance?.toString() // Adjust according to your PDF structure
+private fun getDefaultAppearance(field: PDField): String? {
+    return if (field is PDTextField) {
+        field.defaultAppearance.toString()
+    } else {
+        "-"
+    }
 }
 
 private fun getQuadding(field: PDField): String? {
