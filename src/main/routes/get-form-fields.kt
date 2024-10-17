@@ -13,7 +13,6 @@ import java.io.IOException
 data class FieldInfo(
     val name: String,
     val value: String,
-    val fieldFlags: Int,
     val x: Float,
     val y: Float,
     val width: Float,
@@ -63,7 +62,6 @@ fun GetFormFields () {
                         FieldInfo(
                             name = field.fullyQualifiedName,
                             value = field.valueAsString,
-                            fieldFlags = field.fieldFlags,
                             x = rect.lowerLeftX,
                             y = rect.lowerLeftY,
                             width = rect.width,
