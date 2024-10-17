@@ -15,6 +15,7 @@ fun Service () {
     GetPageDimensions()
     GetFirstPageAsImage()
     GetFormFields()
+    SetFormFields()
     AreasToText()
     PatternToText()
 }
