@@ -1,13 +1,14 @@
 package de.martaflex.nanopdf.routes
 
-import de.martaflex.nanopdf.helpers.*
-
-import java.io.*
-
-import spark.Spark.*
-
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import de.martaflex.nanopdf.helpers.drawRectanglesOnPage
+import de.martaflex.nanopdf.helpers.fromBase64
+import de.martaflex.nanopdf.helpers.fromJson
+import de.martaflex.nanopdf.helpers.translateCoordinates
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.pdmodel.common.PDRectangle
+import spark.Spark.halt
+import spark.Spark.post
+import java.io.ByteArrayOutputStream
 
 fun DrawRectangles () {
     post("/draw-rectangles", "application/json", fun(request, response) : Any {
@@ -42,8 +43,8 @@ fun DrawRectangles () {
             var buffer = ByteArrayOutputStream()
             var rectangles: ArrayList<PDRectangle> = ArrayList<PDRectangle>()
 
-            val maxX = doc.getPage(0).mediaBox.width.toInt();
-            val maxY = doc.getPage(0).mediaBox.height.toInt();
+            val maxX = doc.getPage(0).mediaBox.width
+            val maxY = doc.getPage(0).mediaBox.height
 
             for (key in values.fieldNames()) {
                 val rect = values.get(key)
@@ -52,14 +53,14 @@ fun DrawRectangles () {
                 val width = rect.get("width").asText();
                 val height = rect.get("height").asText();
 
-                val adjustedY = y.toInt() + height.toInt();
+                val adjustedY = y.toFloat() + height.toFloat();
 
-                val (topLeftX, topLeftY) = translateCoordinates(x.toInt(), adjustedY, maxX, maxY);
+                val (topLeftX, topLeftY) = translateCoordinates(x.toFloat(), adjustedY, maxX, maxY);
 
                 rectangles.add(
                     PDRectangle(
-                        topLeftX.toFloat(),
-                        topLeftY.toFloat(),
+                        topLeftX,
+                        topLeftY,
                         width.toFloat(),
                         height.toFloat()
                     )
