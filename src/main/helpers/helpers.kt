@@ -83,7 +83,7 @@ fun translateCoordinates(bottomLeftX: Float, bottomLeftY: Float, maxX: Float, ma
 }
 
 fun createDefaultAppearanceString(fontWeight: String, fontSize: Double, fontColor: String): String {
-    val fontName = if (fontWeight == "normal") "/Helv" else "/HeBo"
+    val fontName = if (fontWeight == "normal") "/Helv" else "/F2"
     val colorString = when (fontColor.lowercase()) {
         "black" -> "0 0 0 rg"
         "white" -> "1 1 1 rg"

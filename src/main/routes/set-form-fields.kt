@@ -74,20 +74,29 @@ fun SetFormFields () {
             // Adobe Acrobat uses Helvetica as a default font and
             // stores that under the name '/Helv' in the resources dictionary
             val helveticaFont = PDType1Font(FontName.HELVETICA)
-            // val helveticaBoldFont = PDType1Font(FontName.HELVETICA_BOLD)
+            val helveticaBoldFont = PDType1Font(FontName.HELVETICA_BOLD)
 
-            val resources = PDResources()
-            resources.put(COSName.HELV, helveticaFont)
-            // FIXME HeBo is not reference but still available
-            // resources.put(COSName.HeBo, helveticaBoldFont)
+
 
             val acroForm = PDAcroForm(doc)
             doc.documentCatalog.acroForm = acroForm
 
+            var resources = acroForm.defaultResources
+            if (resources == null) {
+                resources = PDResources()
+            }
+            resources.put(COSName.HELV, helveticaFont)
+            // FIXME: helveticaBoldFont should be there as /HeBo
+            //        but since is not in COSName its added plain
+            //        gets assigned /F2 font
+            resources.add(helveticaBoldFont)
+
             acroForm.defaultResources = resources
             // Acrobat sets the font size on the form level to be
             // auto sized as default. This is done by setting the font size to '0'
-
+            for (test in acroForm.defaultResources.fontNames) {
+                println(test.name)
+            }
             acroForm.defaultAppearance = "/Helv 0 Tf 0 g"
 
             val fields = json.get("data")
