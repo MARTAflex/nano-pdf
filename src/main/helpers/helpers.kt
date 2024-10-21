@@ -1,19 +1,15 @@
 package de.martaflex.nanopdf.helpers
 
-import java.io.*
-import java.util.Base64
-import java.awt.Color
-
-import spark.Spark.*
-import spark.ResponseTransformer
-
-import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.core.JsonParseException
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.PDPage
+import org.apache.pdfbox.pdmodel.PDPageContentStream
+import org.apache.pdfbox.pdmodel.common.PDRectangle
+import spark.Spark.halt
+import java.awt.Color
+import java.util.*
 
 data class Error(
     val status: Int,
@@ -84,4 +80,15 @@ fun translateCoordinates(bottomLeftX: Float, bottomLeftY: Float, maxX: Float, ma
     val topLeftX = bottomLeftX
     val topLeftY = maxY - bottomLeftY
     return Pair(topLeftX, topLeftY)
+}
+
+fun createDefaultAppearanceString(fontWeight: String, fontSize: Double, fontColor: String): String {
+    val fontName = if (fontWeight == "normal") "/Helv" else "/HeBo"
+    val colorString = when (fontColor.lowercase()) {
+        "black" -> "0 0 0 rg"
+        "white" -> "1 1 1 rg"
+        else -> "0 g"
+    }
+
+    return "$fontName $fontSize Tf $colorString"
 }

@@ -11,7 +11,6 @@ import java.io.IOException
 
 
 data class FieldInfo(
-    val name: String,
     val value: String,
     val x: Float,
     val y: Float,
@@ -45,7 +44,7 @@ fun GetFormFields () {
         try {
             val doc = Loader.loadPDF(pdf);
             val acroForm = doc.documentCatalog.acroForm;
-            val result = mutableListOf<FieldInfo>()
+            val result = mutableMapOf<String, FieldInfo>()
 
             if( acroForm == null || acroForm.fields.isEmpty()) {
                 return "{}"
@@ -58,19 +57,16 @@ fun GetFormFields () {
                     val page = doc.pages.indexOf(widget.page)
                     val type = getFieldType(field)
 
-                    result.add(
-                        FieldInfo(
-                            name = field.fullyQualifiedName,
-                            value = field.valueAsString,
-                            x = rect.lowerLeftX,
-                            y = rect.lowerLeftY,
-                            width = rect.width,
-                            height = rect.height,
-                            type = type,
-                            page = page,
-                            defaultAppearance = getDefaultAppearance(field),
-                            quadding = getQuadding(field),
-                        )
+                    result[field.fullyQualifiedName] = FieldInfo(
+                        value = field.valueAsString,
+                        x = rect.lowerLeftX,
+                        y = rect.lowerLeftY,
+                        width = rect.width,
+                        height = rect.height,
+                        type = type,
+                        page = page,
+                        defaultAppearance = getDefaultAppearance(field),
+                        quadding = getQuadding(field),
                     )
                 }
 
