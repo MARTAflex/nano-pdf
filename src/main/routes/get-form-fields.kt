@@ -11,6 +11,7 @@ import java.io.IOException
 
 
 data class FieldInfo(
+    val fullyQualifiedName: String,
     val value: String,
     val x: Float,
     val y: Float,
@@ -50,24 +51,34 @@ fun GetFormFields () {
                 return "{}"
             }
             else {
-
                 for (field in acroForm.fields) {
-                    val widget = field.widgets[0]
-                    val rect = widget.rectangle
-                    val page = doc.pages.indexOf(widget.page)
-                    val type = getFieldType(field)
+                    for(widget in field.widgets) {
+                        val rect = widget.rectangle
+                        val page = doc.pages.indexOf(widget.page)
+                        val type = getFieldType(field)
+                        val fullyQualifiedName = field.fullyQualifiedName
 
-                    result[field.fullyQualifiedName] = FieldInfo(
-                        value = field.valueAsString,
-                        x = rect.lowerLeftX,
-                        y = rect.lowerLeftY,
-                        width = rect.width,
-                        height = rect.height,
-                        type = type,
-                        page = page,
-                        defaultAppearance = getDefaultAppearance(field),
-                        quadding = getQuadding(field),
-                    )
+                        var uniqueKey = fullyQualifiedName
+                        var counter = 1
+
+                        while (result.containsKey(uniqueKey)) {
+                            uniqueKey = "$fullyQualifiedName$counter"
+                            counter++
+                        }
+
+                        result[uniqueKey] = FieldInfo(
+                            fullyQualifiedName = fullyQualifiedName,
+                            value = field.valueAsString,
+                            x = rect.lowerLeftX,
+                            y = rect.lowerLeftY,
+                            width = rect.width,
+                            height = rect.height,
+                            type = type,
+                            page = page,
+                            defaultAppearance = getDefaultAppearance(field),
+                            quadding = getQuadding(field),
+                        )
+                    }
                 }
 
                 response.type("application/json")
