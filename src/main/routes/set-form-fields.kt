@@ -3,7 +3,6 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.createDefaultAppearanceString
 import de.martaflex.nanopdf.helpers.fromBase64
 import de.martaflex.nanopdf.helpers.fromJson
-import de.martaflex.nanopdf.helpers.translateCoordinates
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.cos.COSName
 import org.apache.pdfbox.pdmodel.PDResources
@@ -94,15 +93,13 @@ fun SetFormFields () {
             acroForm.defaultResources = resources
             // Acrobat sets the font size on the form level to be
             // auto sized as default. This is done by setting the font size to '0'
-            for (test in acroForm.defaultResources.fontNames) {
-                println(test.name)
-            }
             acroForm.defaultAppearance = "/Helv 0 Tf 0 g"
 
             val fields = json.get("data")
 
             for (fieldName in fields.fieldNames()) {
                 val fieldValues = fields.get(fieldName)
+                val fullyQualifiedName = fieldValues.get("fullyQualifiedName").asText()
                 val x = fieldValues.get("x").asText()
                 val y = fieldValues.get("y").asText()
                 val width = fieldValues.get("width").asText()
@@ -116,18 +113,18 @@ fun SetFormFields () {
 
 
                 val page = doc.getPage(pageValue.toInt())
-                val maxX = page.mediaBox.width
-                val maxY = page.mediaBox.height
+                // val maxX = page.mediaBox.width
+                // val maxY = page.mediaBox.height
 
-                val adjustedY = y.toFloat() + height.toFloat()
-                val (topLeftX, topLeftY) = translateCoordinates(x.toFloat(), adjustedY, maxX, maxY)
+                // val adjustedY = y.toFloat() + height.toFloat()
+                // val (topLeftX, topLeftY) = translateCoordinates(x.toFloat(), adjustedY, maxX, maxY)
 
                 // TODO: implement extra fieldtypes
                 if (type != "text") {
                     continue
                 }
                 val textbox = PDTextField(acroForm)
-                textbox.partialName = fieldName
+                textbox.partialName = fullyQualifiedName
 
                 textbox.defaultAppearance = createDefaultAppearanceString(
                     fontWeight,
@@ -139,8 +136,8 @@ fun SetFormFields () {
 
                 val widget: PDAnnotationWidget = textbox.widgets.get(0)
                 val rect = PDRectangle(
-                    topLeftX,
-                    topLeftY,
+                    x.toFloat(),
+                    y.toFloat(),
                     width.toFloat(),
                     height.toFloat()
                 )
