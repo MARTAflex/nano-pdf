@@ -4,6 +4,6 @@ LABEL authors="Jan Schwalbe - jan.schwalbe@martaflex.de, Julius Bischoff - juliu
 RUN apk add --no-cache msttcorefonts-installer fontconfig font-liberation  font-dejavu 
 RUN fc-cache -f -v
 
-ADD build/distributions/nano-pdf-0.0.8.tar /
-ENTRYPOINT ["/nano-pdf-0.0.8/bin/nano-pdf"]
+ADD build/distributions/nano-pdf-0.1.0.tar /
+ENTRYPOINT ["/nano-pdf-0.1.0/bin/nano-pdf"]
 EXPOSE 9091
