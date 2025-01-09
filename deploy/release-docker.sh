@@ -19,7 +19,7 @@ REPODIR=$(realpath "$SCRIPT_DIR/../")
 CODE_VERSION=$(bash get-next-version.sh $CURRENT_VERSION $1)
 
 FULL_VERSION="$CODE_VERSION.$IMAGE_VERSION"
-TAG="nanopdf:$FULL_VERSION"
+TAG="ghcr.io/martaflex/nano-pdf:$FULL_VERSION"
 
 echo "IMAGE TAG:"
 echo "    $TAG"
@@ -44,7 +44,7 @@ sdk env install
 
 
 docker build -f deploy/Dockerfile -t martaflex/nano-pdf:latest . \
-&& docker tag ghcr.io/martaflex/nano-pdf $TAG \
+&& docker tag martaflex/nano-pdf $TAG \
 && echo build finshed --- $FULL_VERSION
 
 
