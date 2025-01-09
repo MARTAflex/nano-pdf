@@ -1,21 +1,15 @@
 package de.martaflex.nanopdf.routes
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
-import java.util.Base64
 
 import spark.Spark.*
-import spark.ResponseTransformer
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.core.JsonParseException
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfCopy;
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.multipdf.PDFMergerUtility
+import org.apache.pdfbox.pdmodel.PDDocument
 
 fun GroupPages () {
     post("/group-pages", "application/json", fun(request, response) : Any {
@@ -43,34 +37,29 @@ fun GroupPages () {
 
         // FIXME: im basically 100%sure that this will never be null
         val pdf = fromBase64(json.get("pdf").asText())!!;
-
         try {
-            val reader = PdfReader(pdf)
+            val doc = Loader.loadPDF(pdf);
             val values = json.get("data")
-            var result: MutableMap<String, String> = mutableMapOf()
+            val result: MutableMap<String, String> = mutableMapOf()
 
             for (key in values.fieldNames()) {
-                var buffer = ByteArrayOutputStream()
-                var document = Document()
-                var copy = PdfCopy(document, buffer)
-                var pages = values.get(key)
-
-                document.open()
-                for (page in pages) {
-                    //expecting pagenumbers from array; so we offset here
-                    copy.addPage(copy.getImportedPage(reader, page.asInt()+1))
+                val newDocument = PDDocument();
+                val outputBuffer = ByteArrayOutputStream()
+                //this is 0-based array
+                val pages = values.get(key);
+                for (pageNumber in pages) {
+                    newDocument.importPage(doc.getPage(pageNumber.asInt()))
                 }
-                document.close()
+                newDocument.save(outputBuffer)
+                newDocument.close()
 
-                result[key] = toBase64(buffer.toByteArray())
+                result[key] = toBase64(outputBuffer.toByteArray())
             }
-
-            reader.close()
 
             response.type("application/json")
             return toJson(result)
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }

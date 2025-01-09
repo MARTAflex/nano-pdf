@@ -1,7 +1,5 @@
 package de.martaflex.nanopdf.routes
 
-import de.martaflex.nanopdf.helpers.*
-
 import java.io.*
 import java.util.Base64
 import java.util.concurrent.TimeUnit
@@ -13,12 +11,12 @@ import org.junit.Assert.*
 import spark.Spark.*
 import com.mashape.unirest.http.*
 
-class GroupPagesTest {
+class DrawRectanglesTest {
     companion object {
         @BeforeClass @JvmStatic
         fun setup () {
             port(9091)
-            GroupPages();
+            DrawRectangles();
             // wait for spark to be initialized
             awaitInitialization()
         }
@@ -34,7 +32,7 @@ class GroupPagesTest {
 
     @Test
     fun noPostBody () {
-        val response = Unirest.post("http://127.0.0.1:9091/group-pages")
+        val response = Unirest.post("http://127.0.0.1:9091/draw-rectangles")
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .asString()
@@ -45,7 +43,7 @@ class GroupPagesTest {
 
     @Test
     fun emptyPostBody () {
-        val response = Unirest.post("http://127.0.0.1:9091/group-pages")
+        val response = Unirest.post("http://127.0.0.1:9091/draw-rectangles")
             .header("Content-Type", "application/json")
             .body("")
             .asString()
@@ -56,7 +54,7 @@ class GroupPagesTest {
 
     @Test
     fun invalidPostBody () {
-        val response = Unirest.post("http://127.0.0.1:9091/group-pages")
+        val response = Unirest.post("http://127.0.0.1:9091/draw-rectangles")
             .header("Content-Type", "application/json")
             .body("""{ "k1": "v1" }""")
             .asString()
@@ -67,7 +65,7 @@ class GroupPagesTest {
 
     @Test
     fun invalidBase64 () {
-        val response = Unirest.post("http://127.0.0.1:9091/group-pages")
+        val response = Unirest.post("http://127.0.0.1:9091/draw-rectangles")
             .header("Content-Type", "application/json")
             .body("""
             {
@@ -84,53 +82,78 @@ class GroupPagesTest {
     }
 
     @Test
-    fun validPost () {
-        val pdf = File("resources/test/group-pages.pdf").readBytes();
-        val expected = File("resources/test/group-pages-out.pdf").readBytes();
+    fun PDFWithoutForm () {
+        val pdf = File("resources/test/form-fill-out.pdf").readBytes();
         val pdf64 = String(Base64.getEncoder().encode(pdf));
 
-        val response = Unirest.post("http://127.0.0.1:9091/group-pages")
+        val response = Unirest.post("http://127.0.0.1:9091/draw-rectangles")
             .header("Content-Type", "application/json")
             .body("""
             {
                 "data": {
-                    "test": [0]
+                    "firstname": "Periódicos",
+                    "lastname": "Españoles"
                 },
+                "flatten": true,
                 "pdf": "${ pdf64 }"
             }
             """)
-            .asString()
+            .asBinary()
+
+        assertEquals(400, response.getStatus());
+        println(response.getBody());
+    }
+
+    @Test
+    fun validPost () {
+        val pdf = File("resources/test/draw-rectangles.pdf").readBytes();
+        val expected = File("resources/test/draw-rectangles-out.pdf").readBytes();
+        val pdf64 = String(Base64.getEncoder().encode(pdf));
+
+        val response = Unirest.post("http://127.0.0.1:9091/draw-rectangles")
+            .header("Content-Type", "application/json")
+            .body("""
+            {
+                "data": {
+                    "rect1": {
+                        "x": "150",
+                        "y": "500",
+                        "width": "300",
+                        "height": "80"
+                    }
+                },
+                "flatten": true,
+                "pdf": "${ pdf64 }"
+            }
+            """)
+            .asBinary()
 
         assertEquals(200, response.getStatus());
 
-        val json = fromJson(response.getBody())!!;
+        // readbytes returns empty when called multiple times; is that intended?
+        val retrieved = response.getBody().readBytes();
 
-        val retrieved = fromBase64(json.get("test").asText())!!;
 
         // we need to remove the lines with /Author and /Info
-        // since theese contain data that is generated dynamically whenever the pdf
+        // since these contain data that is generated dynamically whenever the pdf
         // is modified (e.g. modification timestamp)
 
         var se = String(expected);
         var sr = String(retrieved);
 
         // remove /ModDate from content
-        var rx = """\/ModDate\([^\)]+\)""".toRegex();
+        var rx = """/ModDate\([^)]+\)""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
 
         // remove id from content
-        rx = """\/ID\s+\[[^\]]+\]""".toRegex();
+        rx = """/ID\s+\[[^]]+]""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
+
 
         // remove /Producer which contains open office version
-        rx = """\/Producer\(([^\\][^\)])+[^\\]\)""".toRegex();
-        se = se.replace(rx, "");
-        sr = sr.replace(rx, "");
-
-        // remove /CreationDate from content
-        rx = """\/CreationDate\([^\)]+\)""".toRegex();
+        rx = """/Producer\(([^\\][^)])+[^\\]\)""".toRegex();
         se = se.replace(rx, "");
         sr = sr.replace(rx, "");
 

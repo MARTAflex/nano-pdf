@@ -3,23 +3,11 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
-import java.util.Base64
 
 import spark.Spark.*
-import spark.ResponseTransformer
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.core.JsonParseException
-
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
-
-// #2 is another variant of parsing; in this version the order of the resultingText
-// is more line based
-// #2 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.text.PDFTextStripper
 
 fun ChunkToText () {
     post("/chunk-to-text", "application/json", fun(request, response) : Any {
@@ -53,10 +41,13 @@ fun ChunkToText () {
         val result = ArrayList<String>();
 
         try {
-            val reader = PdfReader(pdf)
-            val parser = PdfReaderContentParser(reader);
-            val numberOfPages = reader.getNumberOfPages();
-            var start = chunkIndex * chunkSize;
+            val doc = Loader.loadPDF(pdf);
+            val stripper = PDFTextStripper();
+
+            stripper.sortByPosition = true;
+
+            val numberOfPages = doc.numberOfPages;
+            val start = chunkIndex * chunkSize;
             var end = ((chunkIndex * chunkSize) + chunkSize) - 1;
             //for last chunk
             if (end > numberOfPages) {
@@ -69,16 +60,16 @@ fun ChunkToText () {
             for (i in start..end) {
                 //println("i:" + i);
                 //offsetting i because start is arrayIndex
-                val strategy = parser.processContent(i+1, SimpleTextExtractionStrategy());
-                result.add(strategy.getResultantText());
-                // #2  result.add(PdfTextExtractor.getTextFromPage(reader, i))
+                stripper.startPage = i+1;
+                stripper.endPage = i+1;
+
+                result.add(stripper.getText(doc));
             }
-            reader.close()
 
             response.type("application/json")
             return toJson(result)
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }

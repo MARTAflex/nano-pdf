@@ -3,13 +3,16 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
+import java.util.Base64
 
 import spark.Spark.*
 
-import org.apache.pdfbox.Loader
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.rendering.PDFRenderer
+import javax.imageio.ImageIO
 
-fun CheckIfForm () {
-    post("/check-if-form", "application/json", fun(request, response) : Any {
+fun GetPageDimensions () {
+    post("/get-page-dimensions", "application/json", fun(request, response) : Any {
         val body = request.body();
 
         if (body == "") {
@@ -25,20 +28,18 @@ fun CheckIfForm () {
         }
 
         // FIXME: im basically 100%sure that this will never be null
-        val pdf = fromBase64(json.get("pdf").asText())!!;
+        val pdf = fromBase64(json.get("pdf").asText())!!
+        val result = ArrayList<FloatArray>()
 
         try {
             val doc = Loader.loadPDF(pdf);
-            val catalog = doc.documentCatalog;
-            val acroForm = catalog.acroForm
-            var hasFormFields = false;
 
-            if (acroForm != null) {
-                hasFormFields = !acroForm.fields.isEmpty();
+            for (page in doc.pages.iterator()) {
+                result.add(page.mediaBox.cosArray.toFloatArray())
             }
-            doc.close();
 
-            return hasFormFields
+            response.type("application/json")
+            return toJson(result)
         }
         catch ( e : IOException) {
             println(e.message);

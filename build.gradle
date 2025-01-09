@@ -1,40 +1,43 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.1.2-2'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20'
     //id 'com.bmuschko.docker-java-application' version '3.0.6'
 }
 
 repositories {
-    jcenter()
+    //jcenter() EOS 01.02.2022
+    mavenCentral()
     maven { url "https://jitpack.io" }
 }
 
 dependencies {
     // kotlin stdlib to get kotlin to do anything
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1.2-2'
+    implementation('org.jetbrains.kotlin:kotlin-stdlib:1.9.20')
 
     // spark rest framework
-    compile 'com.sparkjava:spark-core:2.6.0'
+    implementation('com.sparkjava:spark-core:2.9.4')
     // needed in spark 2.5 to get rid of
     // > Failed to load class "org.slf4j.impl.StaticLoggerBinder".
     // error message and enable logging
-    compile 'org.slf4j:slf4j-simple:1.7.25'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
+    implementation('org.slf4j:slf4j-simple:1.7.25')
+    implementation('ch.qos.logback:logback-classic:1.2.3')
 
     // convenient json library
-    compile 'com.fasterxml.jackson.core:jackson-core:2.8.8'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.8.1'
+    implementation('com.fasterxml.jackson.core:jackson-core:2.16.1')
+    implementation('com.fasterxml.jackson.core:jackson-databind:2.16.1')
 
-    // pdf library that suppirts form flattening (used by pdftk)
-    compile 'com.itextpdf:itextpdf:5.5.11'
+    // pdf library that supports form flattening/better licensing
+    implementation('org.apache.pdfbox:pdfbox:3.0.1')
 
     // Test Dependencies
     // unit testing framework that sucks balls (FIXME: any other options?)
-    testCompile 'junit:junit:4.12'
+    testImplementation('junit:junit:4.13.2')
     // convenient request library
-    testCompile 'com.mashape.unirest:unirest-java:1.4.8'
+    testImplementation('com.mashape.unirest:unirest-java:1.4.8')
 }
+
+version = "0.1.0"
 
 sourceSets {
     main.kotlin.srcDirs += 'src/main/'
@@ -49,13 +52,13 @@ test {
 }
 
 jar {
-    baseName = 'nano-pdf'
-    version = '0.0.6'
+    archiveFileName = 'nano-pdf'
+    archiveVersion = version
     mainClassName = 'MainKt'
     manifest {
-        attributes 'Implementation-Title': 'Nano-PDF Microservice',
-                   'Implementation-Version': version,
-                   'Main-Class': mainClassName
+        attributes  'Implementation-Title': 'Nano-PDF Microservice',
+                    'Implementation-Version': version,
+                    'Main-Class': mainClassName
     }
 }
 

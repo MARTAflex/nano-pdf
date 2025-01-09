@@ -3,23 +3,9 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.*
 
 import java.io.*
-import java.util.Base64
 
 import spark.Spark.*
-import spark.ResponseTransformer
-
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.core.JsonParseException
-
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.exceptions.InvalidPdfException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
-
-// #2 is another variant of parsing; in this version the order of the resultingText
-// is more line based
-// #2 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import org.apache.pdfbox.Loader
 
 fun GetPdfLength () {
     post("/get-pdf-length", "application/json", fun(request, response) : Any {
@@ -41,13 +27,15 @@ fun GetPdfLength () {
         val pdf = fromBase64(json.get("pdf").asText())!!
 
         try {
-            val reader = PdfReader(pdf)
+            val doc = Loader.loadPDF(pdf)
+            val numberOfPages = doc.numberOfPages;
 
+            doc.close();
 
             response.type("application/json")
-            return reader.getNumberOfPages()
+            return numberOfPages;
         }
-        catch ( e : InvalidPdfException) {
+        catch ( e : IOException) {
             println(e.message);
             halt(400, e.message)
         }
