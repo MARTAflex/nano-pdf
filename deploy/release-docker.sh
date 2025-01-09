@@ -43,8 +43,8 @@ sdk env install
 ./gradlew clean build
 
 
-docker build -f deploy/Dockerfile -t martaflex/nanopdf:latest . \
-&& docker tag martaflex/nanopdf $TAG \
+docker build -f deploy/Dockerfile -t martaflex/nano-pdf:latest . \
+&& docker tag ghcr.io/martaflex/nano-pdf $TAG \
 && echo build finshed --- $FULL_VERSION
 
 
