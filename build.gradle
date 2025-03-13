@@ -28,7 +28,7 @@ dependencies {
     implementation('com.fasterxml.jackson.core:jackson-databind:2.16.1')
 
     // pdf library that supports form flattening/better licensing
-    implementation('org.apache.pdfbox:pdfbox:3.0.1')
+    implementation('org.apache.pdfbox:pdfbox:3.0.4')
 
     // Test Dependencies
     // unit testing framework that sucks balls (FIXME: any other options?)
