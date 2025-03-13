@@ -52,7 +52,7 @@ fun FormFill () {
                 halt(400, "pdf has no form fields");
             }
             else {
-                // val fieldtree = acroForm.getFieldTree()
+                val fieldtree = acroForm.getFieldTree()
 
                 // for (field in fieldtree) {
                 //     println("Field Name: ${field.fullyQualifiedName}")
@@ -60,10 +60,11 @@ fun FormFill () {
                 //form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
                 val values = json.get("data");
 
-                for (key in values.fieldNames()) {
-                    val field = acroForm.getField(key);
-                    if (field != null) {
-                        field.setValue(values.get(key).asText(""));
+                for (field in fieldtree) {
+                    val key = field.fullyQualifiedName;
+                    val text = values.get(key)?.asText("");
+                    if (text != null) {
+                        field.setValue(text);
                     }
                 }
 
