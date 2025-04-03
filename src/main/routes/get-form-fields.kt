@@ -47,11 +47,13 @@ fun GetFormFields () {
             val acroForm = doc.documentCatalog.acroForm;
             val result = mutableMapOf<String, FieldInfo>()
 
+            
+
             if( acroForm == null || acroForm.fields.isEmpty()) {
-                return "{}"
+                halt(400, "no form fields found");
             }
             else {
-                for (field in acroForm.fields) {
+                for (field in acroForm.getFieldTree()) {
                     for(widget in field.widgets) {
                         val rect = widget.rectangle
                         val page = doc.pages.indexOf(widget.page)
