@@ -18,6 +18,7 @@ fun Service () {
     SetFormFields()
     AreasToText()
     PatternToText()
-    
+    AvailableFonts()
+
     StatusController()
 }
