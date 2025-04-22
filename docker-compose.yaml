@@ -1,0 +1,8 @@
+services:
+  nano-pdf:
+    image: ghcr.io/martaflex/nano-pdf:0.1.5-rc.0.0
+    container_name: nano-pdf
+    ports:
+      - '9091:9091'
+    restart: unless-stopped
+    

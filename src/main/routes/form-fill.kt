@@ -2,6 +2,9 @@ package de.martaflex.nanopdf.routes
 
 import de.martaflex.nanopdf.helpers.*
 
+import org.apache.pdfbox.cos.COSName
+import org.apache.pdfbox.pdmodel.interactive.form.*
+
 import java.io.*
 
 import spark.Spark.*
@@ -52,6 +55,11 @@ fun FormFill () {
                 halt(400, "pdf has no form fields");
             }
             else {
+                // mapping liberationSans as Helvetica 
+                //val liberationSans = FontProvider.loadFont(doc, FontStyle.SANS)
+                //acroForm.defaultResources.put(COSName.getPDFName("Helv"), liberationSans)
+                //acroForm.defaultResources.add(liberationSans)
+
                 val fieldtree = acroForm.getFieldTree()
 
                 // for (field in fieldtree) {
@@ -61,7 +69,12 @@ fun FormFill () {
                 val values = json.get("data");
 
                 for (field in fieldtree) {
-                    val key = field.fullyQualifiedName;
+                    val key = field.fullyQualifiedName
+                    if (field is PDTextField) {
+                        val test = field.defaultAppearance.toString()
+                        println(test)
+                    }
+
                     val text = values.get(key)?.asText("");
                     if (text != null) {
                         field.setValue(text);

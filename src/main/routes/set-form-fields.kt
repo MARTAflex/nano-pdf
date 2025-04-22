@@ -3,6 +3,8 @@ package de.martaflex.nanopdf.routes
 import de.martaflex.nanopdf.helpers.createDefaultAppearanceString
 import de.martaflex.nanopdf.helpers.fromBase64
 import de.martaflex.nanopdf.helpers.fromJson
+import de.martaflex.nanopdf.helpers.FontProvider
+import de.martaflex.nanopdf.helpers.FontStyle
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.cos.COSName
 import org.apache.pdfbox.pdmodel.PDResources
@@ -72,9 +74,10 @@ fun SetFormFields () {
 
             // Adobe Acrobat uses Helvetica as a default font and
             // stores that under the name '/Helv' in the resources dictionary
-            val helveticaFont = PDType1Font(FontName.HELVETICA)
-            val helveticaBoldFont = PDType1Font(FontName.HELVETICA_BOLD)
-
+            //val helveticaFont = PDType1Font(FontName.HELVETICA)
+            //val helveticaBoldFont = PDType1Font(FontName.HELVETICA_BOLD)
+            val liberationSans = FontProvider.loadFont(doc, FontStyle.SANS)
+            val liberationSansBold = FontProvider.loadFont(doc, FontStyle.SANSBOLD)
 
 
             val acroForm = PDAcroForm(doc)
@@ -84,16 +87,19 @@ fun SetFormFields () {
             if (resources == null) {
                 resources = PDResources()
             }
-            resources.put(COSName.HELV, helveticaFont)
+            //resources.put(COSName.HELV, helveticaFont)
             // FIXME: helveticaBoldFont should be there as /HeBo
             //        but since is not in COSName its added plain
             //        gets assigned /F2 font
-            resources.add(helveticaBoldFont)
+            //resources.add(helveticaBoldFont)
+            val sansName = resources.add(liberationSans) 
+            val sansBoldName = resources.add(liberationSansBold) 
+
 
             acroForm.defaultResources = resources
             // Acrobat sets the font size on the form level to be
             // auto sized as default. This is done by setting the font size to '0'
-            acroForm.defaultAppearance = "/Helv 0 Tf 0 g"
+            acroForm.defaultAppearance = sansName.name + " 0 Tf 0 g"
 
             val fields = json.get("data")
 
@@ -125,9 +131,11 @@ fun SetFormFields () {
                 }
                 val textbox = PDTextField(acroForm)
                 textbox.partialName = fullyQualifiedName
+                
+                val fontName = if (fontWeight == "normal") sansName.name else sansBoldName.name
 
                 textbox.defaultAppearance = createDefaultAppearanceString(
-                    fontWeight,
+                    fontName,
                     fontSize.toDouble(),
                     fontColor,
                 )
