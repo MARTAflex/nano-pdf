@@ -35,18 +35,35 @@ fun AvailableFonts () {
         
         try {
             val doc = Loader.loadPDF(pdf)
-            val embeddedFonts = mutableSetOf<String>()
+            val embeddedPageFonts = mutableSetOf<String>()
             
             for (page in doc.pages) {
                 val resources = page.resources
 
                 for (fontKey in resources.fontNames) {
                     val font = resources.getFont(fontKey)
-                    embeddedFonts.add(font.name)
+                    embeddedPageFonts.add(font.name)
                 }
             }
+            
+            result["embeddedPageFonts"] = embeddedPageFonts
 
-            result["embeddedFonts"] = embeddedFonts
+            val embeddedAcroFormFonts = mutableSetOf<String>()
+            val acroForm = doc.documentCatalog.acroForm
+            
+            if( acroForm != null) {
+                val resources = acroForm.defaultResources
+                if( resources != null && resources.fontNames != null) {
+                    for (fontKey in resources.fontNames) {
+                        val font = resources.getFont(fontKey)
+                        embeddedAcroFormFonts.add(font.name)
+                    }
+                }
+            }
+            
+            result["embeddedAcroFormFonts"] = embeddedAcroFormFonts
+
+
 
             val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
             val localFonts = mutableSetOf<String>()
