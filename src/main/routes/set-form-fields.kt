@@ -92,8 +92,11 @@ fun SetFormFields () {
             //        but since is not in COSName its added plain
             //        gets assigned /F2 font
             //resources.add(helveticaBoldFont)
-            val sansName = resources.add(liberationSans) 
-            val sansBoldName = resources.add(liberationSansBold) 
+            val sansName = COSName.getPDFName("LiberationSans")
+            resources.put(sansName, liberationSans) 
+
+            val sansBoldName = COSName.getPDFName("LiberationSansBold")
+            resources.put(sansBoldName, liberationSansBold) 
 
 
             acroForm.defaultResources = resources
