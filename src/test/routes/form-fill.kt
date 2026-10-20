@@ -11,6 +11,9 @@ import org.junit.Assert.*
 import spark.Spark.*
 import com.mashape.unirest.http.*
 
+import org.apache.pdfbox.Loader
+import org.apache.pdfbox.text.PDFTextStripper
+
 class FormFillTest {
     companion object {
         @BeforeClass @JvmStatic
@@ -157,6 +160,63 @@ class FormFillTest {
         //File("sr.pdf").writeText(sr);
 
         assertEquals(se, sr);
+    }
+
+    private fun fill (file: String, firstname: String, flatten: Boolean) : HttpResponse<InputStream> {
+        val pdf64 = String(Base64.getEncoder().encode(File(file).readBytes()));
+
+        return Unirest.post("http://127.0.0.1:9091/form-fill")
+            .header("Content-Type", "application/json")
+            .body("""
+            {
+                "data": {
+                    "firstname": "${ firstname }",
+                    "lastname": "Müller"
+                },
+                "flatten": ${ flatten },
+                "pdf": "${ pdf64 }"
+            }
+            """)
+            .asBinary()
+    }
+
+    // /DA of the field references /Arial which is not in the AcroForm /DR
+    @Test
+    fun fontMissingInForm () {
+        val response = fill("resources/test/form-fill-unknown-font.pdf", "Alice", false)
+
+        assertEquals(200, response.getStatus());
+
+        val doc = Loader.loadPDF(response.getBody().readBytes());
+        assertEquals("Alice", doc.documentCatalog.acroForm.getField("firstname").valueAsString);
+        doc.close();
+    }
+
+    // Helvetica (WinAnsiEncoding) has no glyphs for Ł or cyrillic
+    @Test
+    fun charactersMissingInFieldFont () {
+        for (flatten in listOf(false, true)) {
+            val response = fill("resources/test/form-fill-helvetica.pdf", "Łukasz Иван", flatten)
+
+            assertEquals(200, response.getStatus());
+
+            val doc = Loader.loadPDF(response.getBody().readBytes());
+            if (flatten) {
+                assertTrue(PDFTextStripper().getText(doc).contains("Łukasz Иван"));
+            }
+            else {
+                assertEquals("Łukasz Иван", doc.documentCatalog.acroForm.getField("firstname").valueAsString);
+            }
+            doc.close();
+        }
+    }
+
+    // the fallback font has no CJK glyphs either
+    @Test
+    fun charactersMissingInFallbackFont () {
+        val response = fill("resources/test/form-fill-helvetica.pdf", "日本語", true)
+
+        assertEquals(400, response.getStatus());
     }
 
 }

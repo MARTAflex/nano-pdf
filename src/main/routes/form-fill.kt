@@ -67,6 +67,8 @@ fun FormFill () {
                 // }
                 //form.setGenerateAppearances(true); // if not set the fields will be empty when flattening
                 val values = json.get("data");
+                val flatten = json.get("flatten")?.asBoolean() == true
+                val fallbackFont = FallbackFont(doc, acroForm)
 
                 for (field in fieldtree) {
                     val key = field.fullyQualifiedName
@@ -77,11 +79,20 @@ fun FormFill () {
 
                     val text = values.get(key)?.asText("");
                     if (text != null) {
-                        field.setValue(text);
+                        if (field is PDVariableText) {
+                            fallbackFont.prepare(field, text)
+                        }
+                        try {
+                            field.setValue(text);
+                        }
+                        catch (e: IllegalArgumentException) {
+                            // e.g. characters that neither the field font nor the fallback font provide
+                            halt(400, "could not set field '$key': ${e.message}")
+                        }
                     }
                 }
 
-                if (json.get("flatten")?.asBoolean() == true) {
+                if (flatten) {
                     acroForm.flatten();
                 }
 
