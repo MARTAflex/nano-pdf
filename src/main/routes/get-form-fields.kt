@@ -4,6 +4,7 @@ import de.martaflex.nanopdf.helpers.fromBase64
 import de.martaflex.nanopdf.helpers.fromJson
 import de.martaflex.nanopdf.helpers.toJson
 import org.apache.pdfbox.Loader
+import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.interactive.form.*
 import spark.Spark.halt
 import spark.Spark.post
@@ -11,14 +12,14 @@ import java.io.IOException
 
 
 data class FieldInfo(
-    val fullyQualifiedName: String,
+    val fullyQualifiedName: String?,
     val value: String,
-    val x: Float,
-    val y: Float,
-    val width: Float,
-    val height: Float,
+    val x: Float?,
+    val y: Float?,
+    val width: Float?,
+    val height: Float?,
     val type: String,
-    val page: Int,
+    val page: Int?,
     val defaultAppearance: String? = null,
     val quadding: String? = null,
 )
@@ -55,26 +56,28 @@ fun GetFormFields () {
             else {
                 for (field in acroForm.getFieldTree()) {
                     for(widget in field.widgets) {
-                        val rect = widget.rectangle
-                        val page = doc.pages.indexOf(widget.page)
+                        // /Rect, /P and /T are not always present; missing values are returned as null
+                        val rect: PDRectangle? = widget.rectangle
+                        val page = widget.page?.let { doc.pages.indexOf(it) }?.takeIf { it >= 0 }
                         val type = getFieldType(field)
-                        val fullyQualifiedName = field.fullyQualifiedName
+                        val fullyQualifiedName: String? = field.fullyQualifiedName
 
-                        var uniqueKey = fullyQualifiedName
+                        val baseKey = fullyQualifiedName ?: ""
+                        var uniqueKey = baseKey
                         var counter = 1
 
                         while (result.containsKey(uniqueKey)) {
-                            uniqueKey = "$fullyQualifiedName$counter"
+                            uniqueKey = "$baseKey$counter"
                             counter++
                         }
 
                         result[uniqueKey] = FieldInfo(
                             fullyQualifiedName = fullyQualifiedName,
                             value = field.valueAsString,
-                            x = rect.lowerLeftX,
-                            y = rect.lowerLeftY,
-                            width = rect.width,
-                            height = rect.height,
+                            x = rect?.lowerLeftX,
+                            y = rect?.lowerLeftY,
+                            width = rect?.width,
+                            height = rect?.height,
                             type = type,
                             page = page,
                             defaultAppearance = getDefaultAppearance(field),

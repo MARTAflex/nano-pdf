@@ -188,6 +188,10 @@ bottom left corner of the page, `page` is 0-based.
 `type` is one of `text`, `checkbox`, `radio`, `combo`, `list`, `unknown`.
 Returns `400` if the PDF has no form fields.
 
+Values the PDF doesn't provide are returned as `null`: `page` if the widget has no page
+reference, `x`/`y`/`width`/`height` if it has no rectangle, `fullyQualifiedName` if the
+field has no name (its key is then `""`, `"1"`, ...).
+
 #### `POST /set-form-fields`
 
 Removes **all** existing form fields and creates new text fields:
