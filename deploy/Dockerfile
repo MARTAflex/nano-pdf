@@ -10,6 +10,6 @@ RUN apk add --no-cache \
 
 RUN fc-cache -f -v
 
-ADD build/distributions/nano-pdf-0.1.5.tar /
-ENTRYPOINT ["/nano-pdf-0.1.5/bin/nano-pdf"]
+ADD build/distributions/nano-pdf-0.1.6.tar /
+ENTRYPOINT ["/nano-pdf-0.1.6/bin/nano-pdf"]
 EXPOSE 9091

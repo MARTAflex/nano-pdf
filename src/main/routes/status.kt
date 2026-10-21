@@ -8,7 +8,7 @@ fun StatusController () {
         // this gets updated via the deploy script and 
         // should be therefore in sync with build.gradle version
 
-        val version = "0.1.5";
+        val version = "0.1.6";
         
         return version;
     })
