@@ -148,7 +148,9 @@ Response: the filled PDF (binary).
 If a field's font is missing in the PDF or can't display the given text (e.g. Polish or
 Cyrillic characters with Helvetica), the bundled Liberation Sans is used as a fallback.
 Characters that Liberation Sans doesn't cover either (e.g. CJK, emoji) result in a `400`.
-Returns `400` if the PDF has no form fields.
+Returns `400` if the PDF has no form fields. If the environment variable
+`FORM_FILL_RETURN_PDF_WITHOUT_FORM` is set to `true`, such a PDF is returned unchanged
+(`200`) instead.
 
 #### `POST /check-if-form`
 

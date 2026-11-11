@@ -11,7 +11,10 @@ import spark.Spark.*
 
 import org.apache.pdfbox.Loader
 
-fun FormFill () {
+// if set to true, a pdf without form fields is returned unchanged instead of a 400
+const val FORM_FILL_RETURN_PDF_WITHOUT_FORM = "FORM_FILL_RETURN_PDF_WITHOUT_FORM"
+
+fun FormFill (returnPdfWithoutForm: Boolean = envFlag(FORM_FILL_RETURN_PDF_WITHOUT_FORM)) {
     post("/form-fill", "application/json", fun(request, response) : Any {
         val body = request.body();
 
@@ -52,7 +55,13 @@ fun FormFill () {
             val acroForm = doc.documentCatalog.acroForm
 
             if( acroForm == null || acroForm.fields.isEmpty()) {
-                halt(400, "pdf has no form fields");
+                doc.close();
+                if (!returnPdfWithoutForm) {
+                    halt(400, "pdf has no form fields");
+                }
+                // nothing to fill, hand back the pdf as it was supplied
+                response.type("application/pdf");
+                return pdf;
             }
             else {
                 // mapping liberationSans as Helvetica 

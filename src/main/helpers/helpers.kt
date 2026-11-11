@@ -92,3 +92,8 @@ fun createDefaultAppearanceString(fontName: String, fontSize: Double, fontColor:
 
     return "$fontName $fontSize Tf $colorString"
 }
+
+// true only if the environment variable is set to "true" (case-insensitive)
+fun envFlag (name : String) : Boolean {
+    return System.getenv(name)?.trim()?.equals("true", ignoreCase = true) == true;
+}
