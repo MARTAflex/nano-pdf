@@ -17,6 +17,7 @@ fun Service () {
     GetFormFields()
     SetFormFields()
     AreasToText()
+    AreasToImages()
     PatternToText()
     AvailableFonts()
 

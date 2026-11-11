@@ -122,6 +122,7 @@ answered with status `400` and a plain text error message.
 | [`POST /get-pdf-length`](#post-get-pdf-length) | number of pages | number |
 | [`POST /get-page-dimensions`](#post-get-page-dimensions) | page size per page | JSON |
 | [`POST /get-first-page-as-image`](#post-get-first-page-as-image) | first page rendered as PNG | JSON |
+| [`POST /areas-to-images`](#post-areas-to-images) | areas of pages rendered as PNGs | JSON |
 | [`POST /group-pages`](#post-group-pages) | split the PDF into new PDFs from picked pages | JSON |
 | [`POST /draw-rectangles`](#post-draw-rectangles) | draw rectangles on every page | PDF |
 
@@ -333,6 +334,37 @@ of each page, e.g. `[[0.0, 0.0, 595.0, 842.0]]`.
 ```
 
 Response: JSON string with the first page rendered as base64 encoded PNG (72 dpi).
+
+#### `POST /areas-to-images`
+
+```json
+{
+    "pdf": "...",
+    "dpi": 300,
+    "padding": 10,
+    "data": {
+        "firstname": { "page": 0, "x": 114, "y": 63, "width": 119, "height": 25 }
+    }
+}
+```
+
+Renders each area as an image, e.g. as input for OCR.
+
+- coordinates are numbers in PDF points with the origin in the **top left** corner of the
+  page as it is displayed (crop box, page rotation applied)
+- `page` (optional, default `0`) is 0-based; each page is only rendered once
+- `dpi` (optional, default `300`, `36`–`600`)
+- `padding` (optional, default `0`, max `200`) adds a white border of that many pixels,
+  OCR works better when the text doesn't touch the edge
+- `color` (optional, default `false`) renders in color instead of grayscale
+- areas partially outside the page are cut off at the page edge; areas completely outside,
+  pages that don't exist and invalid parameters return `400`
+
+Response: JSON object with a base64 encoded PNG per area, in the order of the request:
+
+```json
+{ "firstname": "iVBORw0KGgo..." }
+```
 
 #### `POST /group-pages`
 
